@@ -7,13 +7,12 @@ defmodule Portal do
 		import Supervisor.Spec, warn: false
 		
 		children = [
-		# Define workers and child supervisors to be supervised
-		# worker(Portal.Worker, [arg1, arg2, arg3]),
+			worker(Portal.Door, [])
 		]
 
 		# See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
 		# for other strategies and supported options
-		opts = [strategy: :one_for_one, name: Portal.Supervisor]
+		opts = [strategy: :simple_one_for_one, name: Portal.Supervisor]
 		Supervisor.start_link(children, opts)
 	end
 	
@@ -45,5 +44,12 @@ defmodule Portal do
 
 		# Let's return the portal itself
 		portal
+	end
+	
+	@doc """
+	Shoots a new door with the given `color`.
+	"""
+	def shoot(color) do
+		Supervisor.start_child(Portal.Supervisor, [color])
 	end
 end
