@@ -27,12 +27,30 @@ defmodule Portal.Door do
 	Pops a value from the `door`
 	Returns `{:ok, value}` if there is a value
 	or `:error` if the hole is currently empty.
-	"""
-	
+	"""	
 	def pop(door) do
 		Agent.get_and_update(door, fn
 			[]	-> {:error, []}
 			[h|t]	-> {{:ok, h}, t}
 		end)
+	end
+end
+
+defimpl Inspect, for: Portal do
+	def inspect(%Portal{left: left, right: right}, _) do
+		left_door	= inspect(left)
+		right_door	= inspect(right)
+		
+		left_data	= inspect(Enum.reverse(Portal.Door.get(left)))
+		right_data	= inspect(Portal.Door.get(right))
+		
+		max = max(String.length(left_door), String.length(left_data))
+		
+		"""
+		#Portal<
+			#{String.rjust(left_door, max)} <=> #{right_door}
+			#{String.rjust(left_data, max)} <=> #{right_data}
+		>
+		"""
 	end
 end
