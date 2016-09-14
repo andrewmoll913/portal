@@ -34,30 +34,30 @@ defmodule Portal do
 	@doc """
 	Pushes data to the right in the given `portal`.
 	"""
-  [:left, :right] |> Enum.map(fn direction ->
-    def unquote(:"push_#{direction}")(portal) do
-      push(portal, unquote(direction))
-    end
-  end)
-  
-	def push(portal, direction) do
-    {entrance, exit} = get_entrance_exit(portal, direction)
-    case Portal.Door.pop(entrance) do
-      :error -> :ok
-      {:ok, h} -> Portal.Door.push(exit, h)
-    end
-    
-    portal
-  end
+	[:left, :right] |> Enum.map(fn direction ->
+		def unquote(:"push_#{direction}")(portal) do
+			push(portal, unquote(direction))
+		end
+	end)
 	
-  defp get_entrance_exit(portal, :left) do
-    {portal.right, portal.left}
-  end
-  
-  defp get_entrance_exit(portal, :right) do
-    {portal.left, portal.right}
-  end
-  
+	def push(portal, direction) do
+		{entrance, exit} = get_entrance_exit(portal, direction)
+		case Portal.Door.pop(entrance) do
+			:error -> :ok
+			{:ok, h} -> Portal.Door.push(exit, h)
+		end
+
+		portal
+	end
+	
+	defp get_entrance_exit(portal, :left) do
+		{portal.right, portal.left}
+	end
+
+	defp get_entrance_exit(portal, :right) do
+		{portal.left, portal.right}
+	end
+
 	@doc """
 	Shoots a new door with the given `color`.
 	"""
